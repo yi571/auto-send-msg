@@ -7,3 +7,7 @@ edition = "2021"
 
 [dependencies]
 enigo = {path = "./enigo", version = "0.0.14"}
+structopt = "0.3"
+
+[build-dependencies]
+static_vcruntime = "2.0"
