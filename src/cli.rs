@@ -16,14 +16,6 @@ pub struct CommandLineArgs {
     #[structopt(subcommand)]
     pub action: Action,
 
-    /// 設定input x軸。
-    #[structopt(short = "x", long = "x_axis")]
-    pub input_x_axis: Option<i32>,
-
-    /// 設定input y軸。
-    #[structopt(short = "y", long = "y_axis")]
-    pub input_y_axis: Option<i32>,
-    
     /// 設定訊息。
     #[structopt(short, long)]
     pub msg: Option<String>,

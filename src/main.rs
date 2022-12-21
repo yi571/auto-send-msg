@@ -5,14 +5,14 @@ use structopt::StructOpt;
 mod cli;
 use cli::CommandLineArgs;
 
+use windows::{
+    w,
+    Win32::Foundation::*,
+    Win32::UI::WindowsAndMessaging::*,
+};
+
 fn main() {
-    let CommandLineArgs {
-        input_x_axis,
-        input_y_axis,
-        msg,
-        action,
-        delay,
-    } = CommandLineArgs::from_args();
+    let CommandLineArgs { msg, action, delay } = CommandLineArgs::from_args();
 
     match action {
         cli::Action::Start => {
@@ -23,22 +23,6 @@ fn main() {
                 None => time::Duration::from_secs(0),
             };
 
-            let input_x_axis = match input_x_axis {
-                Some(input_x_axis) => input_x_axis,
-                None => {
-                    println!("必須有inputx");
-                    return;
-                }
-            };
-
-            let input_y_axis = match input_y_axis {
-                Some(input_y_axis) => input_y_axis,
-                None => {
-                    println!("必須有inputy");
-                    return;
-                }
-            };
-
             let msg = match msg {
                 Some(msg) => msg,
                 None => {
@@ -47,22 +31,31 @@ fn main() {
                 }
             };
 
-
             thread::sleep(delay_time);
 
-            let mut enigo = Enigo::new();
-            //enigo.mouse_move_to(1300, 1100);
-            enigo.mouse_move_to(input_x_axis, input_y_axis);
-            enigo.mouse_click(MouseButton::Left);
+            let win_seded: BOOL;
 
-            enigo.key_sequence(&msg);
-            //enigo.mouse_move_to(1461, 1100);
-            // enigo.mouse_move_to(button_x_axis, button_y_axis);
-            // enigo.mouse_click(MouseButton::Left);
+            unsafe {
+                let win = FindWindowW(None, w!("XXX"));
+                //println!("{:#?}", win);
+                
+                win_seded = SetForegroundWindow(win);
+                
+            }
 
-            enigo.key_click(Key::Return);
+            let not_set_win = BOOL(0);
+            if win_seded != not_set_win {
+                let mut enigo = Enigo::new();
 
-            println!("完成動作");
+                enigo.key_sequence(&msg);
+
+                enigo.key_click(Key::Return);
+
+                println!("完成動作");
+            }
+            else{
+                println!("請指定正確的視窗");
+            }
         }
     }
 }
