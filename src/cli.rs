@@ -16,6 +16,10 @@ pub struct CommandLineArgs {
     #[structopt(subcommand)]
     pub action: Action,
 
+    /// 設定視窗。
+    #[structopt(short, long)]
+    pub win: Option<String>,
+
     /// 設定訊息。
     #[structopt(short, long)]
     pub msg: Option<String>,

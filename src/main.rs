@@ -6,13 +6,12 @@ mod cli;
 use cli::CommandLineArgs;
 
 use windows::{
-    w,
     Win32::Foundation::*,
-    Win32::UI::WindowsAndMessaging::*,
+    Win32::UI::WindowsAndMessaging::*, core::{PCWSTR, HSTRING},
 };
 
 fn main() {
-    let CommandLineArgs { msg, action, delay } = CommandLineArgs::from_args();
+    let CommandLineArgs { msg, action, delay, win } = CommandLineArgs::from_args();
 
     match action {
         cli::Action::Start => {
@@ -31,13 +30,24 @@ fn main() {
                 }
             };
 
+            let win = match win {
+                Some(win) => win,
+                None => {
+                    println!("必須輸入視窗");
+                    return;
+                }
+            };
+
             thread::sleep(delay_time);
 
             let win_seded: BOOL;
+            
+            let win = HSTRING::from(&win).as_wide().as_ptr();
+            let win = PCWSTR(win as _);
 
             unsafe {
-                let win = FindWindowW(None, w!("XXX"));
-                //println!("{:#?}", win);
+                let win = FindWindowW(None, win);
+                println!("{:#?}", win.0 > 0);
                 
                 win_seded = SetForegroundWindow(win);
                 
