@@ -20,7 +20,7 @@ pub enum Action {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "auto send msg", about = "模擬鍵鼠傳送訊息")]
+#[structopt(name = "auto send msg", about = "模擬鍵鼠傳送訊息", version = "0.1.0")]
 pub struct CommandLineArgs {
     #[structopt(subcommand)]
     pub action: Action,
