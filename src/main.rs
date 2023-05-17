@@ -6,15 +6,20 @@ mod cli;
 use cli::CommandLineArgs;
 
 use windows::{
+    core::{HSTRING, PCWSTR},
     Win32::Foundation::*,
-    Win32::UI::WindowsAndMessaging::*, core::{PCWSTR, HSTRING},
+    Win32::UI::WindowsAndMessaging::*,
 };
 
 fn main() {
-    let CommandLineArgs { msg, action, delay, win } = CommandLineArgs::from_args();
+    let command_line_args = CommandLineArgs::from_args();
 
-    match action {
-        cli::Action::Start => {
+    match command_line_args.action {
+        cli::Action::Start {
+            msg,
+            delay,
+            win,
+        } => {
             println!("開始動作");
 
             let delay_time = match delay {
@@ -22,35 +27,19 @@ fn main() {
                 None => time::Duration::from_secs(0),
             };
 
-            let msg = match msg {
-                Some(msg) => msg,
-                None => {
-                    println!("必須有msg");
-                    return;
-                }
-            };
-
-            let win = match win {
-                Some(win) => win,
-                None => {
-                    println!("必須輸入視窗");
-                    return;
-                }
-            };
 
             thread::sleep(delay_time);
 
             let win_seded: BOOL;
-            
+
             let win = HSTRING::from(&win).as_wide().as_ptr();
             let win = PCWSTR(win as _);
 
             unsafe {
                 let win = FindWindowW(None, win);
-                println!("{:#?}", win.0 > 0);
-                
+                println!("{:#?}", win.0);
+
                 win_seded = SetForegroundWindow(win);
-                
             }
 
             let not_set_win = BOOL(0);
@@ -62,8 +51,7 @@ fn main() {
                 enigo.key_click(Key::Return);
 
                 println!("完成動作");
-            }
-            else{
+            } else {
                 println!("請指定正確的視窗");
             }
         }
