@@ -1,8 +1,6 @@
-on:
-  release:
-    types: [created]
-  push:
+name: 'release'
 
+on: workflow_dispatch
 
 jobs:
   release:
