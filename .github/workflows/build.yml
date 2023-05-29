@@ -48,7 +48,7 @@ jobs:
         run: tar --directory=target/release -cf archive.tar.gz auto-send-msg.exe
       - name: upload
         run: |
-          $id = gh api -H "Accept: application/vnd.github+json" /repos/yi571/auto-send-msg/releases/tags/auto-send-msg-v${{ process.env.release_id }} --jq .id
+          $id = gh api -H "Accept: application/vnd.github+json" /repos/yi571/auto-send-msg/releases/tags/auto-send-msg-v${ process.env.release_id } --jq .id
           curl --fail-with-body -sS  -X POST --data-binary "@archive.tar.gz" -H 'Content-Type: application/octet-stream' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' "https://uploads.github.com/repos/yi571/auto-send-msg/releases/$id/assets?name=auto-send-msg_${{ github.ref_name }}_x86_64-pc-windows-msvc.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
