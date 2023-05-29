@@ -14,7 +14,7 @@ jobs:
       - name: Check Release Version
         uses: thebongy/version-check@v1
         with:
-          file: package.json
+          file: Cargo.toml
           tagFormat: ${version}
         id: version_check_staging
       - name: get version
