@@ -2,48 +2,36 @@ name: 'release'
 
 on: workflow_dispatch
 
+
 jobs:
-  release:
-    name: release ${{ matrix.target }} (with non-required env)
-    runs-on: ubuntu-latest
-    if: github.event_name == 'release'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: x86_64-pc-windows-gnu
-            archive: zip
-    steps:
-      - uses: actions/checkout@master
-      - name: Compile and release
-        uses: rust-build/rust-build.action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          RUSTTARGET: ${{ matrix.target }}
-          EXTRA_FILES: "README.md"
-          SRC_DIR: "hello"
-          ARCHIVE_TYPES: ${{ matrix.archive }}
-          PRE_BUILD: "pre_build.sh"
-          POST_BUILD: "test/post_build.sh"
-          MINIFY: "yes"
-          releaseId: ${{ needs.create-release.outputs.release_id }}
-  publish-release:
+  create-release:
     runs-on: ubuntu-20.04
-    needs: [release]
+    outputs:
+      release_id: ${{ steps.create-release.outputs.result }}
 
     steps:
-      - name: publish release
-        id: publish-release
-        uses: actions/github-script@v6
-        env:
-          release_id: ${{ needs.create-release.outputs.release_id }}
+      - uses: actions/checkout@v3
+      - name: Check Release Version
+        uses: thebongy/version-check@v1
         with:
-          script: |
-            github.rest.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: process.env.release_id,
-              draft: false,
-              prerelease: false
-            })
+          file: package.json
+          tagFormat: ${version}
+        id: version_check_staging
+      - name: get version
+        run: echo "PACKAGE_VERSION=${{steps.version_check_staging.outputs.releaseVersion}}"
+#       - name: create release
+#         id: create-release
+#         uses: actions/github-script@v6
+#         with:
+#           script: |
+#             const { data } = await github.rest.repos.createRelease({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               tag_name: `app-v${process.env.PACKAGE_VERSION}`,
+#               name: `Desktop App v${process.env.PACKAGE_VERSION}`,
+#               body: 'Take a look at the assets to download and install this app.',
+#               draft: true,
+#               prerelease: false
+#             })
+
+#             return data.id
