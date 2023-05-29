@@ -15,6 +15,12 @@ jobs:
             archive: zip
     steps:
       - uses: actions/checkout@master
+      - name: Check Release Version
+        uses: thebongy/version-check@v1
+        with:
+          file: Cargo.toml
+          tagFormat: ${version}
+        id: version_check_staging
       - name: Compile
         id: compile
         uses: rust-build/rust-build.action@v1.4.3
@@ -36,4 +42,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ steps.compile.outputs.BUILT_ARCHIVE }}
           asset_name: ${{ matrix.asset_name }}
-          tag: ${{ github.ref }}
+          tag: ${{ steps.version_check_staging.outputs.releaseVersion }}
