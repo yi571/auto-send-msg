@@ -41,6 +41,8 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
+      - name: get version
+        run: echo "PACKAGE_VERSION=${{steps.version_check_staging.outputs.releaseVersion}}" >> $GITHUB_ENV
       - name: Build
         run: |
           cargo build --release
@@ -48,7 +50,7 @@ jobs:
         run: tar --directory=target/release -cf archive.tar.gz auto-send-msg.exe
       - name: upload
         run: |
-          $id = gh api -H "Accept: application/vnd.github+json" /repos/yi571/auto-send-msg/releases/tags/auto-send-msg-v${{ env.PACKAGE_VERSION }} --jq .id
+          $id = gh api -H "Accept: application/vnd.github+json" /repos/yi571/auto-send-msg/releases/tags/auto-send-msg-v${{ process.env.PACKAGE_VERSION }} --jq .id
           curl --fail-with-body -sS  -X POST --data-binary "@archive.tar.gz" -H 'Content-Type: application/octet-stream' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' "https://uploads.github.com/repos/yi571/auto-send-msg/releases/$id/assets?name=auto-send-msg_${{ github.ref_name }}_x86_64-pc-windows-msvc.tar.gz"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
