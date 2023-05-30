@@ -29,7 +29,6 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           UPLOAD_MODE: none
-          ARCHIVE_NAME: ${{ matrix.target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
@@ -42,5 +41,4 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-          asset_name: "auto-send-msg_${{ matrix.asset_name }}"
           tag: ${{ steps.version_check_staging.outputs.releaseVersion }}
