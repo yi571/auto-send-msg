@@ -29,6 +29,7 @@ jobs:
         with:
           RUSTTARGET: ${{ matrix.target }}
           UPLOAD_MODE: none
+          ARCHIVE_NAME: auto-send-msg_${{ matrix.target }}
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
