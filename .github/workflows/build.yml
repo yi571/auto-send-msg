@@ -42,5 +42,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-          asset_name: ${{ matrix.asset_name }}
+          asset_name: "auto-send-msg_${{ matrix.asset_name }}"
           tag: ${{ steps.version_check_staging.outputs.releaseVersion }}
